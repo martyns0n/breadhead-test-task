@@ -3,13 +3,17 @@
 import React from 'react';
 import axios from 'axios'
 import Link from 'redux-first-router-link';
+import { forEach } from 'async';
 
 
 class Home extends React.Component {
   constructor() {
     super();
     this.state = {
-      offer: {}
+      offers: {
+        offer1: {},
+        offer2: {}
+      }
     }
   }
 
@@ -21,33 +25,33 @@ class Home extends React.Component {
       component.setState({
         offers: response.data
       });
-      console.log('⭐', this.state.offers);
+      // console.log('⭐', this.state.offers);
     })
     .catch(console.log);
+    // this.state.offers.map((element) => {
+    //   console.log(element)
+    // });
+  }
+
+  componentWillUpdate() {
+
   }
   
   render() {
     return (
-      <div>
-        test test
-        {/* {this.state.offers.map((offer) => {
-          return (
-            <div>offer.id</div>
-          )
-        })} */}
-        {/* {this.state.offers.offer1.id} */}
-        {/* <div>
-        {this.state.offers.id}
+      <div className="offers">
+        <div className="name">
+          { this.state.offers.offer1.id || '' }
         </div>
-        <div>
-          {this.state.offers.name}
+        <div className="old-price"> 
+        { this.state.offers.offer1.name || '' }
         </div>
-        <div>
-          {this.state.offers.oldPrice}
+        <div className="new-price">
+        { this.state.offers.offer1.oldPrice || '' }
         </div>
-        <div>
-          {this.state.offers.newPrice}
-        </div> */}
+        <div className="sizes">
+        { this.state.offers.offer1.newPrice || '' }
+        </div>
       </div>
     )
   }
