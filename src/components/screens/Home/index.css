@@ -1,0 +1,19 @@
+.offers {
+    /* height: 100vh; */
+    padding: 32px;
+    margin: 0;
+    background-color: lightblue;
+    display: flex;
+    flex-wrap: wrap;
+    /* flex: 1; */
+}
+
+.offer {
+    background-color: white;
+    list-style-type: none;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    /* margin-right: 16px; */
+    border-radius: 4px;
+}
