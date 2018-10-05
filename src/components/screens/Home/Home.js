@@ -11,8 +11,22 @@ class Home extends React.Component {
   constructor() {
     super();
     this.state = {
-      offers: {}
+      offers: {},
+      sizes: [],
+      selectedSize: "make your choise"
     }
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({selectedSize: event.target.value});
+  }
+
+  handleSubmit(event) {
+    alert('Selected size is: ' + this.state.selectedSize);
+    event.preventDefault();
   }
 
   componentDidMount() {
@@ -24,14 +38,8 @@ class Home extends React.Component {
         offers: response.data,
       });
       
-      {_.map(Object.entries(this.state.offers), (x, i) => {
-        return (
-          console.log(x)
-        )
-      })}
     })
     .catch(console.log);
-
   }
 
   render() {
@@ -40,33 +48,42 @@ class Home extends React.Component {
         <h1>Кроссовки на скидках ⚡</h1>
         <ul className={styles.offers}>
 
-          {_.map(Object.keys(this.state.offers), (offer, i) => {
+          {_.map(Object.entries(this.state.offers), (obj, i) => {
+            let offer = obj[1];
+            // console.log('⭐', offer);
+
+            _.map(offer.sizes, (size, i) => {
+              if (this.state.sizes.indexOf(size)) {
+                this.state.sizes.push(size);
+              }
+            })
+
             return (
               <li className={styles.offer} key={i}>
                 <h2 className={styles.title}>
-                  { this.state.offers.offer1.name }
+                  { offer.name }
                 </h2>
                 <h3 className={styles.subtitle}>
-                  { this.state.offers.offer1.store }
+                  { offer.store }
                 </h3>
                 <p className={styles.oldPrice}>
                   Старая цена:
                   {' '}
-                  { this.state.offers.offer1.oldPrice }
+                  { offer.oldPrice }
                 </p>
                 <p className={styles.newPrice}>
                   Новая цена: 
                   {' '}
-                  { this.state.offers.offer1.newPrice }
+                  { offer.newPrice }
                 </p>
                 <p className={styles.sizes}> 
                   Размеры: 
                   {' '}
-                  { this.state.offers.offer1.sizeType }
+                  { offer.sizeType }
                   {' '}
                   {
-                    this.state.offers.offer1.sizes
-                    ? this.state.offers.offer1.sizes.join(', ')
+                    offer.sizes
+                    ? offer.sizes.join(', ')
                     : ''
                   }
                 </p>
@@ -74,6 +91,26 @@ class Home extends React.Component {
             )
           })}
         </ul>
+
+        <form onSubmit={this.handleSubmit}>
+          <label> Фильтр
+            <select value={this.state.value} onChange={this.handleChange}>
+              <option value="make your choise">make your choise</option>
+              {
+                _.map(Object.entries(this.state.sizes), (size, i) => {
+                  return (
+                    <option key={i} value={size[1]}>{size[1]}</option>
+                  )
+                })
+              }
+              
+            </select>
+          </label>
+          <input type="submit" value="Submit"/>
+        </form>
+
+        {/* <button></button> */}
+
       </React.Fragment>
     )
   }
