@@ -1,16 +1,14 @@
 import Link from 'redux-first-router-link';
 import React from 'react';
 import axios from 'axios';
-// import FilterButtons from '../../modules/FilterButtons';
 import styles from './index.css';
-import { every } from 'async';
 
 class Dealfinder extends React.Component {
   constructor() {
     super();
     this.state = {
       offers: {},
-      filters: []
+      filters: [],
     };
 
     this.handleClick = this.handleClick.bind(this);
@@ -30,7 +28,7 @@ class Dealfinder extends React.Component {
     }
     console.log(this.state.filters);
 
-    event.target.classList.toggle('active');
+    event.target.classList.toggle(styles.active);
   }
 
   componentDidMount() {
@@ -61,7 +59,7 @@ class Dealfinder extends React.Component {
   getSizesButtons() {
     return this.getSizes().map((size, index) => (
       <button
-        className={styles.sizeToggleButton}
+        className={styles.toggleSizeButton}
         key={size}
         onClick={event => this.handleClick(event, size, index)}
       >
@@ -72,19 +70,19 @@ class Dealfinder extends React.Component {
 
   getOffers() {
     if (!this.state.filters.length) {
-      return Object.entries(this.state.offers);
+      return [];
     }
     return Object.entries(this.state.offers).filter(([, offer]) => {
       return this.state.filters
-        .some(filter => offer.sizes.indexOf(filter) !== -1)
+        .some(filter => offer.sizes.indexOf(filter) !== -1);
     });
   }
 
   render() {
     return (
-      <React.Fragment>
+      <section className={styles.dealfinder}>
         <header className={styles.header}>
-          <h1>Кроссовки на скидках
+          <h1 className={styles.title}>Кроссовки на скидках
             <span role="img" aria-label="thunder-emoji">⚡</span>
           </h1>
           <nav className={styles.navigation}>
@@ -102,46 +100,47 @@ class Dealfinder extends React.Component {
         <main className={styles.main}>
           {/* <FilterButtons /> */}
 
-          {this.getSizesButtons()}
+          <div className={styles.filter}>
+            <h2 className={styles.subtitle}>Фильтр размеров</h2>
+            {this.getSizesButtons()}
+          </div>
 
           <ul className={styles.offers}>
-
             {
-              // Object.entries(this.state.offers).map(([offerId, offer]) => (
-              this.getOffers().map(([offerId, offer]) => (
-                <li className={styles.offer} key={offerId}>
-                  <h2 className={styles.title}>
-                    { offer.name }
-                  </h2>
-                  <h3 className={styles.subtitle}>
-                    { offer.store }
-                  </h3>
-                  <p className={styles.oldPrice}>
-                    Старая цена:
-                    {' '}
-                    { offer.oldPrice }
-                  </p>
-                  <p className={styles.newPrice}>
-                    Новая цена:
-                    {' '}
-                    { offer.newPrice }
-                  </p>
-                  <p className={styles.sizes}>
-                    Размеры:
-                    {' '}
-                    { offer.sizeType }
-                    {' '}
-                    {
-                      offer.sizes
-                      ? offer.sizes.join(', ')
-                      : ''
-                    }
-                  </p>
-                </li>
-              ))}
+              (this.getOffers() == 0)
+                ? (<li className={styles.warning}>↑ Выбери размер ↑</li>)
+                : (
+                    this.getOffers().map(([offerId, offer]) => (
+                      <li className={styles.offer} key={offerId}>
+                        <h3 className={styles.name}>
+                          { offer.name }
+                          {' @ '}
+                          { offer.store }
+                        </h3>
+                        <p className={styles.price}>
+                          Цена:
+                          {' '}
+                          <del>{offer.oldPrice}</del>
+                          {' '}
+                          { offer.newPrice }
+                        </p>
+                        <p className={styles.sizes}>
+                          Размеры:
+                          {' '}
+                          {offer.sizesType }
+                          <br />
+                          {
+                            offer.sizes
+                              .map(size => <div className={styles.size} key={size}>{size}</div>)
+                          }
+                        </p>
+                      </li>
+                    ))
+                )
+            }
           </ul>
         </main>
-      </React.Fragment>
+      </section>
     );
   }
 }
