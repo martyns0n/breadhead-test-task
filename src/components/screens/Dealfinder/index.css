@@ -1,47 +1,105 @@
+.dealfinder {
+  background-color: lightblue;
+  padding: 8px;
+  min-height: 100vh;
+}
+
 .header {
-    padding: 16px;
+  padding: 16px;
+  background-color: white;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.title,
+.subtitle {
+  margin-top: 0;
 }
 
 .navigation ul {
-    list-style-type: none;
-    display: flex;
-    padding: 0;
+  list-style-type: none;
+  display: flex;
+  padding: 0;
 }
 
 .navigation li {
-    margin-right: 8px;
+  margin-right: 8px;
 }
 
-.main {
-}
+.main {}
 
 .offers {
-    /* height: 100vh; */
-    padding: 32px;
-    margin: 0;
-    background-color: lightblue;
-    display: flex;
-    flex-wrap: wrap;
-    /* flex: 1; */
+  padding: 32px;
+  margin: 0;
+  background-color: lightblue;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .offer {
-    background-color: white;
-    list-style-type: none;
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 16px;
-    border-radius: 4px;
+  background-color: white;
+  list-style-type: none;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 16px;
+  border-radius: 4px;
 }
 
-.title {
-    margin-top: 0;
+.warning {
+  width: 100%;
+  background-color: white;
+  list-style-type: none;
+  padding: 8px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  text-align: center;
 }
 
-.sizeToggleButton {
-    /* background-color: black; */
+.name {
+  margin-top: 0;
 }
 
-.active {
-    background-color: black;
+.filter {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 8px;
+  background-color: white;
+}
+
+.filter h2 {
+  width: 100%;
+}
+
+.toggleSizeButton {
+  padding: 2px 4px;
+  color: lightcoral;
+  display: block;
+  min-width: 80px;
+  min-height: 40px;
+  border: 2px solid lightcoral;
+  background-color: transparent;
+  border-radius: 4px;
+  margin: 4px;
+}
+
+.toggleSizeButton.active {
+  background-color: lightcoral;
+  color: white;
+}
+
+.size {
+  font-size: 12px;
+  background-color: lightcoral;
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin-right: 2px;
+  color: white;
+  display: inline-block;
+}
+
+@media screen and (min-width: 768px) {
+  .offer {
+    width: 23%;
+    margin-right: 16px;
+  }
 }
