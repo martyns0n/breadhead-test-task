@@ -1,18 +1,22 @@
-import axios from 'axios';
+// import axios from 'axios';
+
+// const homeThunk = async (dispatch, getState) => {
+//   const { data } = await axios.get('http://localhost:8080');
+// };
+
 
 export default {
-	HOME: {
-		path: '/',
-		thunk: homeThunk
-	},
-	DASHBOARD: {
+  HOME: {
+    path: '/',
+    // thunk: homeThunk
+  },
+  DASHBOARD: {
     path: '/dashboard',
-    thunk: homeThunk
-	}
+    // thunk: homeThunk
+  },
+  DEALFINDER: {
+    path: '/dealfinder',
+    // thunk: homeThunk
+  },
 };
 
-const homeThunk = async (dispatch, getState) => {
-  // console.log('im called')
-  const { data } = await axios.get('http://localhost:8080')
-  console.log('⭐', data)
-};
