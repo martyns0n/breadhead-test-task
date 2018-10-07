@@ -3,74 +3,81 @@ import React from 'react';
 import axios from 'axios';
 // import FilterButtons from '../../modules/FilterButtons';
 import styles from './index.css';
+import { every } from 'async';
 
 class Dealfinder extends React.Component {
   constructor() {
     super();
     this.state = {
       offers: {},
-      sizes: [],
+      filters: []
     };
 
     this.handleClick = this.handleClick.bind(this);
   }
 
-  handleClick(event) {
-    const size = event.target.textContent;
-    const isExist = this.state.sizes.indexOf(size) > -1;
-    const position = isExist ? this.state.sizes.indexOf(size) : null;
+  handleClick(event, size) {
+    const filterIndex = this.state.filters.indexOf(size);
 
-    if (isExist) {
-      const afterRemoving = this.state.sizes.filter((item, index) => index !== position);
-      // console.log('⭐', afterRemoving);
-      this.setState(() => ({
-        sizes: afterRemoving,
-      }));
+    if (filterIndex === -1) {
+      this.setState({
+        filters: [...this.state.filters, size],
+      });
     } else {
-      const afterAdding = this.state.sizes.push(size);
-      this.setState(() => ({
-        sizes: afterAdding,
-      }));
+      this.setState({
+        filters: [...this.state.filters.slice(0, filterIndex), ...this.state.filters.slice(filterIndex + 1)],
+      });
     }
+    console.log(this.state.filters);
 
     event.target.classList.toggle('active');
   }
 
   componentDidMount() {
-    // const component = this;
-
     axios.get('http://localhost:8080')
       .then((response) => {
-        // console.log('RESPONSE:', response.data)
         this.setState({
           offers: response.data,
         });
-
-        Object.entries(this.state.offers).map((obj) => {
-          const offer = obj[1];
-          // console.log('OFFER.SIZES:', offer.sizes);
-
-          offer.sizes.map((size) => {
-            // console.log(component.state.sizes);
-            const isExist = this.state.sizes.indexOf(size) > -1;
-            // console.log('😡', isExist);
-
-            // console.log('PUSH:', this.state.sizes.push(size));
-            if (!isExist) {
-              this.setState((state) => {
-                sizes: state.sizes.push(size);
-              });
-              console.log('SIZES:', this.state.sizes);
-            }
-          });
-        });
-        // console.log('OFFERS:', offers);
       })
       .catch(console.log);
+  }
 
-    // console.log('SIZES:', this.state.sizes);
+  getSizes() {
+    return Object.entries(this.state.offers)
+      .reduce((sizes, [, offer]) => {
+        offer.sizes.forEach((size) => {
+          const notExist = sizes.indexOf(size) === -1;
 
-    // console.log('⚡', this.state.sizes);
+          if (notExist) {
+            sizes.push(size);
+          }
+        });
+
+        return sizes;
+      }, []);
+  }
+
+  getSizesButtons() {
+    return this.getSizes().map((size, index) => (
+      <button
+        className={styles.sizeToggleButton}
+        key={size}
+        onClick={event => this.handleClick(event, size, index)}
+      >
+        {size}
+      </button>
+    ));
+  }
+
+  getOffers() {
+    if (!this.state.filters.length) {
+      return Object.entries(this.state.offers);
+    }
+    return Object.entries(this.state.offers).filter(([, offer]) => {
+      return this.state.filters
+        .some(filter => offer.sizes.indexOf(filter) !== -1)
+    });
   }
 
   render() {
@@ -95,29 +102,14 @@ class Dealfinder extends React.Component {
         <main className={styles.main}>
           {/* <FilterButtons /> */}
 
-          {
-            Object.entries(this.state.sizes).map((size, i) => {
-              console.log('❄', this.state.sizes);
-              return (
-                <button
-                  className={styles.sizeToggleButton}
-                  key={i}
-                  onClick={this.handleClick}
-                >
-                  {size[1]}
-                </button>
-              );
-            })
-          }
+          {this.getSizesButtons()}
 
           <ul className={styles.offers}>
 
             {
-              Object.entries(this.state.offers).map((obj, i) => {
-              const offer = obj[1];
-
-              return (
-                <li className={styles.offer} key={i}>
+              // Object.entries(this.state.offers).map(([offerId, offer]) => (
+              this.getOffers().map(([offerId, offer]) => (
+                <li className={styles.offer} key={offerId}>
                   <h2 className={styles.title}>
                     { offer.name }
                   </h2>
@@ -146,8 +138,7 @@ class Dealfinder extends React.Component {
                     }
                   </p>
                 </li>
-              );
-            })}
+              ))}
           </ul>
         </main>
       </React.Fragment>
