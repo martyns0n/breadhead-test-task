@@ -38,11 +38,7 @@ class Dealfinder extends React.Component {
         this.setState({
           offers: response.data,
         });
-        // console.log('🔆', this.state.offers);
       })
-      // .then(() => {
-      //   console.log('🔆', this.state.offers);
-      // })
       .catch(console.log);
   }
 
@@ -105,23 +101,12 @@ class Dealfinder extends React.Component {
         </header>
 
         <main className={styles.main}>
-          {/* <FilterButtons /> */}
-
           <div className={styles.filter}>
             <h2 className={styles.subtitle}>Фильтр размеров</h2>
             {/* {this.getSizesButtons()} */}
           </div>
 
           <ul className={styles.offers}>
-            {/* {
-              this.getOffers().map(offer => (
-                <li className={styles.offer} key={offer.id}>
-                  <h3 className={styles.name}>
-                    {offer.message}
-                  </h3>
-                </li>
-              ))
-            } */}
             {
               (this.getOffers() == 0)
                 ? (<li className={styles.warning}>↑ Выбери размер ↑</li>)
@@ -132,7 +117,8 @@ class Dealfinder extends React.Component {
                         : (
                           <li className={styles.offer} key={offer.id}>
                             <h3 className={styles.name}>
-                              { offer.message.match(/^\w+\n\n/i) }
+                              {/* {offer.message.match(/.*(?=\n\nстарая)/)} */}
+                              {offer.message.match(/.*/)}
                             </h3>
                             <p className={styles.price}>
                               Цена:
@@ -144,13 +130,18 @@ class Dealfinder extends React.Component {
                             <p className={styles.sizes}>
                               Размеры:
                               {' '}
-                              {offer.sizesType }
+                              {offer.message.match(/(?<=размеры: )uk|ru|us|eu/i)}
                               <br />
-                              {/* {
-                                offer.sizes
-                                  .map(size => <div className={styles.size} key={size}>{size}</div>)
-                              } */}
+                              {offer.message.match(/(?<=(uk|ru|us|eu)\s*).*/i)}
                             </p>
+                            <p className={styles.link}>
+                              Ссылка:
+                              <br />
+                              <a href={offer.message.match(/http(s)*:.*\n/i)}>
+                                {offer.message.match(/http:.*\n/i)}
+                              </a>
+                            </p>
+                            <img className={styles.photo} src={offer.media.webpage.url} alt={offer.media.webpage.type} />
                           </li>
                         )
                     ))
