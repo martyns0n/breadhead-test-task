@@ -7,7 +7,7 @@ class Dealfinder extends React.Component {
   constructor() {
     super();
     this.state = {
-      offers: [],
+      deals: [],
       filters: [],
     };
 
@@ -39,7 +39,7 @@ class Dealfinder extends React.Component {
       .then((response) => {
         // console.log('RESPONSE:', response.data);
         this.setState({
-          offers: response.data,
+          deals: response.data,
         });
       })
       .catch(console.log);
@@ -47,9 +47,9 @@ class Dealfinder extends React.Component {
 
   // getSizes() {
   // old approach ==============================
-  //   return Object.entries(this.state.offers)
-  //     .reduce((sizes, [, offer]) => {
-  //       offer.sizes.forEach((size) => {
+  //   return Object.entries(this.state.deals)
+  //     .reduce((sizes, [, deal]) => {
+  //       deal.sizes.forEach((size) => {
   //         const notExist = sizes.indexOf(size) === -1;
 
   //         if (notExist) {
@@ -60,10 +60,10 @@ class Dealfinder extends React.Component {
   //       return sizes;
 
   // // new approach ====================
-  //   console.log('OFFERS:', this.state.offers);
-  //   return this.state.offers
-  //     .reduce((offer) => {
-  //       const sizesStr = offer.message.match((/(?<=(uk|ru|us|eu)\s*).*/i));
+  //   console.log('deals:', this.state.deals);
+  //   return this.state.deals
+  //     .reduce((deal) => {
+  //       const sizesStr = deal.message.match((/(?<=(uk|ru|us|eu)\s*).*/i));
   //       const sizes = sizesStr.split(', ');
 
   //       sizes.forEach((size) => {
@@ -90,15 +90,15 @@ class Dealfinder extends React.Component {
   //   ));
   // }
 
-  getOffers() {
-    return this.state.offers;
+  getDeals() {
+    return this.state.deals;
     // if (!this.state.filters.length) {
     //   return [];
     // }
-    // return this.state.offers.filter((offer) => {
-    //   console.log('OFFER:', offer);
+    // return this.state.deals.filter((deal) => {
+    //   console.log('OFFER:', deal);
     //   return this.state.filters
-    //     .some(filter => offer.sizes.indexOf(filter) !== -1);
+    //     .some(filter => deal.sizes.indexOf(filter) !== -1);
     // });
   }
 
@@ -127,45 +127,45 @@ class Dealfinder extends React.Component {
             {/* {this.getSizesButtons()} */}
           </div>
 
-          <ul className={styles.offers}>
+          <ul className={styles.deals}>
             {
-              (this.getOffers() == 0)
+              (this.getDeals() == 0)
                 ? (<li className={styles.warning}>↑ Выбери размер ↑</li>)
                 : (
-                    this.getOffers().map(offer => (
-                      (offer.message.match(/🍂Дайджест лучших предложений за день!🍂/))
+                    this.getDeals().map(deal => (
+                      (deal.message.match(/🍂Дайджест лучших предложений за день!🍂/))
                         ? ''
                         : (
-                          <li className={styles.offer} key={offer.id}>
+                          <li className={styles.deal} key={deal.id}>
                             <h3 className={styles.name}>
-                              {/* {offer.message.match(/.*(?=\n\nстарая)/)} */}
-                              {offer.message.match(/.*/)}
+                              {/* {deal.message.match(/.*(?=\n\nстарая)/)} */}
+                              {deal.message.match(/.*/)}
                             </h3>
                             <p className={styles.price}>
                               Цена:
                               {' '}
-                              <del>{offer.message.match(/(?<=старая цена: )\d*/)}</del>
+                              <del>{deal.message.match(/(?<=старая цена: )\d*/)}</del>
                               {' '}
-                              {offer.message.match(/(?<=новая цена: )\d*/)}
+                              {deal.message.match(/(?<=новая цена: )\d*/)}
                             </p>
                             <p className={styles.sizes}>
                               Размеры:
                               {' '}
-                              {offer.message.match(/(?<=размеры: )uk|ru|us|eu/i)}
+                              {deal.message.match(/(?<=размеры: )uk|ru|us|eu/i)}
                               <br />
-                              {offer.message.match(/(?<=(uk|ru|us|eu)\s*).*/i)}
+                              {deal.message.match(/(?<=(uk|ru|us|eu)\s*).*/i)}
                             </p>
                             <p className={styles.link}>
                               Ссылка:
                               <br />
-                              <a href={offer.message.match(/http(s)*:.*\n/i)}>
-                                {offer.message.match(/http:.*\n/i)}
+                              <a href={deal.message.match(/http(s)*:.*\n/i)}>
+                                {deal.message.match(/http:.*\n/i)}
                               </a>
                             </p>
                             <img
                               className={styles.photo}
-                              src={offer.media.webpage.url}
-                              alt={offer.media.webpage.type}
+                              src={deal.media.webpage.url}
+                              alt={deal.media.webpage.type}
                             />
                           </li>
                         )
