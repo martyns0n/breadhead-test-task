@@ -40,9 +40,11 @@
   background-color: white;
   list-style-type: none;
   width: 100%;
+  max-width: 400px;
   padding: 8px;
-  margin-bottom: 16px;
   border-radius: 4px;
+  margin: 0 auto;
+  margin-bottom: 16px;
 }
 
 .warning {
