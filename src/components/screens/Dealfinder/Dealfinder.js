@@ -11,25 +11,28 @@ class Dealfinder extends React.Component {
       filters: [],
     };
 
-    // this.handleClick = this.handleClick.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
-  // handleClick(event, size) {
-  //   const filterIndex = this.state.filters.indexOf(size);
+  handleClick(event, size) {
+    const filterIndex = this.state.filters.indexOf(size);
 
-  //   if (filterIndex === -1) {
-  //     this.setState({
-  //       filters: [...this.state.filters, size],
-  //     });
-  //   } else {
-  //     this.setState({
-  //       filters: [...this.state.filters.slice(0, filterIndex), ...this.state.filters.slice(filterIndex + 1)],
-  //     });
-  //   }
-  //   console.log(this.state.filters);
+    if (filterIndex === -1) {
+      this.setState({
+        filters: [...this.state.filters, size],
+      });
+    } else {
+      this.setState({
+        filters: [
+          ...this.state.filters.slice(0, filterIndex),
+          ...this.state.filters.slice(filterIndex + 1),
+        ],
+      });
+    }
+    console.log(this.state.filters);
 
-  //   event.target.classList.toggle(styles.active);
-  // }
+    event.target.classList.toggle(styles.active);
+  }
 
   componentDidMount() {
     axios.get('http://localhost:8080')
@@ -43,9 +46,27 @@ class Dealfinder extends React.Component {
   }
 
   // getSizes() {
+  // old approach ==============================
   //   return Object.entries(this.state.offers)
   //     .reduce((sizes, [, offer]) => {
   //       offer.sizes.forEach((size) => {
+  //         const notExist = sizes.indexOf(size) === -1;
+
+  //         if (notExist) {
+  //           sizes.push(size);
+  //         }
+  //       });
+
+  //       return sizes;
+
+  // // new approach ====================
+  //   console.log('OFFERS:', this.state.offers);
+  //   return this.state.offers
+  //     .reduce((offer) => {
+  //       const sizesStr = offer.message.match((/(?<=(uk|ru|us|eu)\s*).*/i));
+  //       const sizes = sizesStr.split(', ');
+
+  //       sizes.forEach((size) => {
   //         const notExist = sizes.indexOf(size) === -1;
 
   //         if (notExist) {
@@ -141,7 +162,11 @@ class Dealfinder extends React.Component {
                                 {offer.message.match(/http:.*\n/i)}
                               </a>
                             </p>
-                            <img className={styles.photo} src={offer.media.webpage.url} alt={offer.media.webpage.type} />
+                            <img
+                              className={styles.photo}
+                              src={offer.media.webpage.url}
+                              alt={offer.media.webpage.type}
+                            />
                           </li>
                         )
                     ))
