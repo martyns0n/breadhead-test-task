@@ -8,11 +8,71 @@ class Dealfinder extends React.Component {
     super();
     this.state = {
       deals: [],
+      sizes: [],
       filters: [],
     };
 
     this.handleClick = this.handleClick.bind(this);
   }
+
+  getDeals(deals) {
+    this.setState({
+      deals,
+    });
+  }
+
+  getSizes() {
+    const sizesRegExp = /(?<=(?:UK|RU|US|EU)\s?)\d.*/;
+
+    const sizes = this.state.deals.reduce((sizesArr, deal) => {
+      if (deal.message.match(sizesRegExp)) {
+        deal.message
+          .match((sizesRegExp))[0]
+          .split(', ')
+          .forEach((size) => {
+            const notExist = sizesArr.indexOf(size) === -1;
+
+            if (notExist) {
+              sizesArr.push(size);
+            }
+          });
+      }
+
+      return sizesArr;
+    }, []);
+
+
+    this.setState({
+      sizes,
+    });
+  }
+
+  componentDidMount() {
+    axios.get('http://localhost:8080')
+      .then((response) => {
+        this.getDeals(response.data);
+        this.getSizes();
+      })
+      .catch(console.log);
+  }
+
+  getDealsCards() {
+    if (!this.state.filters.length) {
+      return [];
+    }
+
+    return this.state.deals.filter(() => {
+
+      return this.state.filters
+        .some(filter => (
+          this.state.sizes.indexOf(filter) !== -1
+        ));
+    });
+  }
+
+  // test() {
+  //   console.log(this.state.sizes);
+  // }
 
   handleClick(event, size) {
     const filterIndex = this.state.filters.indexOf(size);
@@ -29,77 +89,8 @@ class Dealfinder extends React.Component {
         ],
       });
     }
-    console.log(this.state.filters);
 
     event.target.classList.toggle(styles.active);
-  }
-
-  componentDidMount() {
-    axios.get('http://localhost:8080')
-      .then((response) => {
-        // console.log('RESPONSE:', response.data);
-        this.setState({
-          deals: response.data,
-        });
-      })
-      .catch(console.log);
-  }
-
-  // getSizes() {
-  // old approach ==============================
-  //   return Object.entries(this.state.deals)
-  //     .reduce((sizes, [, deal]) => {
-  //       deal.sizes.forEach((size) => {
-  //         const notExist = sizes.indexOf(size) === -1;
-
-  //         if (notExist) {
-  //           sizes.push(size);
-  //         }
-  //       });
-
-  //       return sizes;
-
-  // // new approach ====================
-  //   console.log('deals:', this.state.deals);
-  //   return this.state.deals
-  //     .reduce((deal) => {
-  //       const sizesStr = deal.message.match((/(?<=(uk|ru|us|eu)\s*).*/i));
-  //       const sizes = sizesStr.split(', ');
-
-  //       sizes.forEach((size) => {
-  //         const notExist = sizes.indexOf(size) === -1;
-
-  //         if (notExist) {
-  //           sizes.push(size);
-  //         }
-  //       });
-
-  //       return sizes;
-  //     }, []);
-  // }
-
-  // getSizesButtons() {
-  //   return this.getSizes().map((size, index) => (
-  //     <button
-  //       className={styles.toggleSizeButton}
-  //       key={size}
-  //       onClick={event => this.handleClick(event, size, index)}
-  //     >
-  //       {size}
-  //     </button>
-  //   ));
-  // }
-
-  getDeals() {
-    return this.state.deals;
-    // if (!this.state.filters.length) {
-    //   return [];
-    // }
-    // return this.state.deals.filter((deal) => {
-    //   console.log('OFFER:', deal);
-    //   return this.state.filters
-    //     .some(filter => deal.sizes.indexOf(filter) !== -1);
-    // });
   }
 
   render() {
@@ -124,52 +115,64 @@ class Dealfinder extends React.Component {
         <main className={styles.main}>
           <div className={styles.filter}>
             <h2 className={styles.subtitle}>Фильтр размеров</h2>
-            {/* {this.getSizesButtons()} */}
+            {
+              this.state.sizes.map((size, index) => (
+                <button
+                  className={styles.toggleSizeButton}
+                  key={size}
+                  onClick={event => this.handleClick(event, size, index)}
+                >
+                  {size}
+                </button>
+              ))
+            }
           </div>
+
+          {/* {this.test()} */}
 
           <ul className={styles.deals}>
             {
-              (this.getDeals() == 0)
+              (this.state.deals)
                 ? (<li className={styles.warning}>↑ Выбери размер ↑</li>)
                 : (
-                    this.getDeals().map(deal => (
-                      (deal.message.match(/🍂Дайджест лучших предложений за день!🍂/))
-                        ? ''
-                        : (
-                          <li className={styles.deal} key={deal.id}>
-                            <h3 className={styles.name}>
-                              {/* {deal.message.match(/.*(?=\n\nстарая)/)} */}
-                              {deal.message.match(/.*/)}
-                            </h3>
-                            <p className={styles.price}>
-                              Цена:
-                              {' '}
-                              <del>{deal.message.match(/(?<=старая цена: )\d*/)}</del>
-                              {' '}
-                              {deal.message.match(/(?<=новая цена: )\d*/)}
-                            </p>
-                            <p className={styles.sizes}>
-                              Размеры:
-                              {' '}
-                              {deal.message.match(/(?<=размеры: )uk|ru|us|eu/i)}
-                              <br />
-                              {deal.message.match(/(?<=(uk|ru|us|eu)\s*).*/i)}
-                            </p>
-                            <p className={styles.link}>
-                              Ссылка:
-                              <br />
-                              <a href={deal.message.match(/http(s)*:.*\n/i)}>
-                                {deal.message.match(/http:.*\n/i)}
-                              </a>
-                            </p>
-                            <img
-                              className={styles.photo}
-                              src={deal.media.webpage.url}
-                              alt={deal.media.webpage.type}
-                            />
-                          </li>
-                        )
-                    ))
+                  this.state.deals.map(deal => (
+                    (deal.message.match(/дайджест/i))
+                      ? ''
+                      : (
+                        <li className={styles.deal} key={deal.id}>
+                          <h3 className={styles.name}>
+                            {deal.message.match(/.*(?=\n\nстарая)/)}
+                            {deal.message.match(/.*/)}
+                          </h3>
+                          <p className={styles.price}>
+                            Цена:
+                            {' '}
+                            <del>{deal.message.match(/(?<=старая цена: )\d*/)}</del>
+                            {' '}
+                            {deal.message.match(/(?<=новая цена: )\d*/)}
+                          </p>
+                          <p className={styles.sizes}>
+                            Размеры:
+                            {' '}
+                            {deal.message.match(/(?<=размеры: )uk|ru|us|eu/i)}
+                            <br />
+                            {deal.message.match(/(?<=(?:UK|RU|US|EU)\s*)\d.*/)}
+                          </p>
+                          <p className={styles.link}>
+                            Ссылка:
+                            <br />
+                            <a href={deal.message.match(/http(s)*:.*\n/i)}>
+                              {deal.message.match(/http(s)*:.*\n/i)}
+                            </a>
+                          </p>
+                          <img
+                            className={styles.photo}
+                            src={deal.media.webpage.url}
+                            alt={deal.media.webpage.type}
+                          />
+                        </li>
+                      )
+                  ))
                 )
             }
           </ul>
