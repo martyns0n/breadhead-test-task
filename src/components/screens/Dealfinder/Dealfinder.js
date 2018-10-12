@@ -81,14 +81,23 @@ class Dealfinder extends React.Component {
   }
 
   getFilteredDeals() {
+    const sizesRegExp = /(?<=(?:UK|RU|US|EU)\s?)\d.*/;
     // console.log('Deals: ', this.state.deals);
     if (!this.state.filters.length) {
       return [];
     }
 
     return this.state.deals
-      .filter(() => this.state.filters
-        .some(filter => this.state.sizes.indexOf(filter) !== -1));
+      .filter(deal => this.state.filters
+        // .some(filter => this.state.deals.indexOf(filter) !== -1));
+        .every(filter => (
+          deal.message.match(sizesRegExp)
+            ? deal.message
+              .match(sizesRegExp)[0]
+              .split(', ')
+              .indexOf(filter) !== -1
+            : false
+        )));
   }
 
   render() {
