@@ -12,7 +12,16 @@ class Dealfinder extends React.Component {
       filters: [],
     };
 
-    this.handleClick = this.handleClick.bind(this);
+    // this.togleFilter = this.togleFilter.bind(this);
+  }
+
+  componentDidMount() {
+    axios.get('http://localhost:8080')
+      .then((response) => {
+        this.getDeals(response.data);
+        this.getSizes();
+      })
+      .catch(console.log);
   }
 
   getDeals(deals) {
@@ -47,34 +56,11 @@ class Dealfinder extends React.Component {
     });
   }
 
-  componentDidMount() {
-    axios.get('http://localhost:8080')
-      .then((response) => {
-        this.getDeals(response.data);
-        this.getSizes();
-      })
-      .catch(console.log);
-  }
-
-  getDealsCards() {
-    if (!this.state.filters.length) {
-      return [];
-    }
-
-    return this.state.deals.filter(() => {
-
-      return this.state.filters
-        .some(filter => (
-          this.state.sizes.indexOf(filter) !== -1
-        ));
-    });
-  }
-
   // test() {
   //   console.log(this.state.sizes);
   // }
 
-  handleClick(event, size) {
+  toggleFilter(event, size) {
     const filterIndex = this.state.filters.indexOf(size);
 
     if (filterIndex === -1) {
@@ -91,6 +77,18 @@ class Dealfinder extends React.Component {
     }
 
     event.target.classList.toggle(styles.active);
+    console.log('Filtered Deals: ', this.getFilteredDeals());
+  }
+
+  getFilteredDeals() {
+    // console.log('Deals: ', this.state.deals);
+    if (!this.state.filters.length) {
+      return [];
+    }
+
+    return this.state.deals
+      .filter(() => this.state.filters
+        .some(filter => this.state.sizes.indexOf(filter) !== -1));
   }
 
   render() {
@@ -120,7 +118,7 @@ class Dealfinder extends React.Component {
                 <button
                   className={styles.toggleSizeButton}
                   key={size}
-                  onClick={event => this.handleClick(event, size, index)}
+                  onClick={event => this.toggleFilter(event, size, index)}
                 >
                   {size}
                 </button>
@@ -133,9 +131,8 @@ class Dealfinder extends React.Component {
           <ul className={styles.deals}>
             {
               (this.state.deals)
-                ? (<li className={styles.warning}>↑ Выбери размер ↑</li>)
-                : (
-                  this.state.deals.map(deal => (
+                ? (
+                  this.getFilteredDeals().map(deal => (
                     (deal.message.match(/дайджест/i))
                       ? ''
                       : (
@@ -155,7 +152,7 @@ class Dealfinder extends React.Component {
                             Размеры:
                             {' '}
                             {deal.message.match(/(?<=размеры: )uk|ru|us|eu/i)}
-                            <br />
+                            {' '}
                             {deal.message.match(/(?<=(?:UK|RU|US|EU)\s*)\d.*/)}
                           </p>
                           <p className={styles.link}>
@@ -174,6 +171,7 @@ class Dealfinder extends React.Component {
                       )
                   ))
                 )
+                : (<li className={styles.warning}>↑ Выбери размер ↑</li>)
             }
           </ul>
         </main>
