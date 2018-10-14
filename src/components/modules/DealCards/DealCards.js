@@ -5,7 +5,7 @@ import styles from './index.css';
 class DealCards extends React.Component {
   getFilteredDeals() {
     let filteredDeals;
-    
+
     if (!this.props.filters.length) {
       filteredDeals = this.props.deals;
     } else {
@@ -14,7 +14,7 @@ class DealCards extends React.Component {
           .some(filter => deal.sizes.indexOf(filter) !== -1));
     }
 
-    return filteredDeals.filter(deal => !deal.message.match(/дайджест/i))
+    return filteredDeals.filter(deal => !deal.message.match(/дайджест/i));
   }
 
   render() {
